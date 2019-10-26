@@ -174,13 +174,13 @@ while True:
         # If the emotion found is either in the list below, display the output in a coloured window
         if emotion_text in ('Angry', 'Disgust', 'Fear', 'Sad'):
             color = emotion_probability * np.asarray((255, 0, 0))
-            threat_rating = ("Rating Level: Threatening")
+            threat_rating = ("Threat Rating: Threatening")
         elif emotion_text in ('Happy', 'Surprise', 'Neutral'):
             color = emotion_probability * np.asarray((0, 255, 0))
-            threat_rating = ("Rating Level: Non-Threatening")
+            threat_rating = ("Threat Rating: Non-Threatening")
         else:
             color = emotion_probability * np.asarray((0, 0, 255))
-            threatRating = ("Unknown")
+            threatRating = ("Threat Rating: Unknown")
 
         color = color.astype(int)
         color = color.tolist()
