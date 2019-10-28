@@ -12,7 +12,7 @@ from scipy.io import loadmat
 from statistics import mode
 from random import shuffle
 
-# Define functions for the emotion detection in the main program
+# Define functions here for the emotion detection in the main program:
 def detect_faces(detection_model, gray_image_array):
     return detection_model.detectMultiScale(gray_image_array, 1.3, 5)
 
@@ -51,36 +51,35 @@ def preprocess_input(x, v2=True):
         x = x * 2.0
     return x
 
-# Loading data sources for emotion detection into main program
-detection_model_path = 'haarcascade_frontalface_default.xml'
-emotion_model_path = 'emotion_model.hdf5'
+# Loading dataset for the emotion detection process
+detection_model = 'haarcascade_frontalface_default.xml'
+emotion_model = 'emotion_model.hdf5'
 emotion_labels = get_labels('fer2013')
 
-# Defining parameters for the box shapes
 frame_window = 10
 emotion_offsets = (20, 40)
 
-# Loading data models
-face_detection = load_detection_model(detection_model_path)
-emotion_classifier = load_model(emotion_model_path, compile=False)
+# Loading in the dataset from the emotion detection process against the data models to enable inference
+face_detection = load_detection_model(detection_model)
+emotion_classifier = load_model(emotion_model, compile=False)
 
-# Enabling input model shapes for inference
+# Enabling model for inference
 emotion_target_size = emotion_classifier.input_shape[1:3]
 
-# Enabling list for calculating modes
+# Enabling list for calculating modes within the data model
 emotion_window = []
 
 # Enabling the video streaming component and supporting library for facial & emotion detection
 cv2.namedWindow('Facial and Emotion Detection')
 video_capture = cv2.VideoCapture(0)
 
-# Enable face_detection library, and import images of the two individuals (Ben Walker & Sashinka Lintang) for the main program to learn
+# Enable face_detection library, and import images of the two individuals (Ben Walker & Sashinka Lintang)
 ben_image = face_recognition.load_image_file('Ben.jpg')
 sashinka_image = face_recognition.load_image_file('Sashinka.jpg')
 ben_face_encoding = face_recognition.face_encodings(ben_image)[0]
 sashinka_face_encoding = face_recognition.face_encodings(sashinka_image)[0]
 
-# Build the array/list of faces encodings and names 
+# Build the array of face encodings and define labels/names of the known individuals
 id_face_encodings = [ben_face_encoding, sashinka_face_encoding]
 id_face_names = ['Ben Walker', 'Sashinka Lintang']
 
@@ -90,16 +89,18 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
-# While the main program is executed (if 'q' is pressed, disable the main program), run in parallel the face detection and emotion detection functions
+# While the main program is executed (if 'q' is pressed, terminate the main program). 
+# This will run in parallel the face detection and emotion detection
 while True:
 
-# Capture a frame of video
+# Capture a single frame from the video input, and convert to grey-scale, 
+# followed by the encoding of facial detection, and processing
     bgr_image = video_capture.read()[1]
     gray_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2GRAY)
     rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
     faces = detect_faces(face_detection, gray_image)
 
-# Optimise the frame for performance and facial recognition
+# Optimise the frame to improve the computational performance
     small_frame = cv2.resize(bgr_image, (0, 0), fx=0.25, fy=0.25)
 
 # Convert BGR color to RGB
@@ -107,14 +108,15 @@ while True:
 
     if process_this_frame:
 
-        # Find the faces and face encodings in the current frame
+        # Find and store the faces and facial encodings in the single frame
         face_locations = face_recognition.face_locations(rgb_small_frame)
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
         face_names = []
         for face_encoding in face_encodings:
 
-            # If the face is match, print the name of the individual; else print "Unknown Individual"
+            # If the face found is match, print the name or label of the individual;
+            # else print "Unknown Individual". Append the result to a list for output
             matches = face_recognition.compare_faces(id_face_encodings, face_encoding)
             name = "Unknown Individual"
 
@@ -127,7 +129,7 @@ while True:
 
     process_this_frame = not process_this_frame
 
-# Output the results of the facial detection
+# Output the result of the facial detection
     for (top, right, bottom, left), name in zip(face_locations, face_names):
 
         top *= 4
@@ -146,7 +148,8 @@ while True:
 # The emotion detection program
     for face_coordinates in faces:
 
-        # Convert frame to grey-scale, and import predictive models into the program
+        # Convert frame to grey-scale, and import trained deep learning model. 
+        # Comparing the defined dataset of emotion, and the frame, output the result and store in variable 
         x1, x2, y1, y2 = apply_offsets(face_coordinates, emotion_offsets)
         gray_face = gray_image[y1:y2, x1:x2]
         try:
@@ -171,7 +174,7 @@ while True:
         except:
             continue
 
-        # If the emotion found is either in the list below, display the output in a coloured window
+        # If one of the emotion found is detected in either of the lists below, display the output in a coloured window
         if emotion_text in ('Angry', 'Disgust', 'Fear', 'Sad'):
             color = emotion_probability * np.asarray((255, 0, 0))
             threat_rating = ("Threat Rating: Threatening")
@@ -193,7 +196,7 @@ while True:
     bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
     cv2.imshow('Facial and Emotion Detection', bgr_image)
 
-    # Quit the main program by pressing "q" on the keyboard
+    # Break condition by pressing "q" on the keyboard
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
