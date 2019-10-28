@@ -1,4 +1,4 @@
-# Import libraries into the main program
+# Import supporting libraries
 import cv2
 import numpy as np
 import cv2
@@ -12,7 +12,7 @@ from scipy.io import loadmat
 from statistics import mode
 from random import shuffle
 
-# Define functions here for the emotion detection in the main program:
+# Define functions for emotion detection
 def detect_faces(detection_model, gray_image_array):
     return detection_model.detectMultiScale(gray_image_array, 1.3, 5)
 
