@@ -105,14 +105,12 @@ video_capture = cv2.VideoCapture(0)
 # Import Ben and Sashinka’s image for the face recognition model
 # Set the face encodings for the imported images
 ben_image = face_recognition.load_image_file('Ben.jpg')
-sashinka_image = face_recognition.load_image_file('Sashinka.jpg')
 ben_face_encoding = face_recognition.face_encodings(ben_image)[0]
-sashinka_face_encoding = face_recognition.face_encodings(sashinka_image)[0]
 
 # Create an array of Ben and Sashinka’s face encodings for identification
 # Create an array of ID names when known faces are recognised
-id_face_encodings = [ben_face_encoding, sashinka_face_encoding]
-id_face_names = ['Ben Walker', 'Sashinka Lintang']
+id_face_encodings = [ben_face_encoding]
+id_face_names = ['Ben Walker']
 
 # Define open variables for face detection 
 face_locations = []
